@@ -3,9 +3,11 @@ package com.soarex.bashik
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
+import java.io.File
 
 data class ProcessContext(
     val env: Environment,
+    val workingDirectory: File,
     val streams: List<Channel<String>> = listOf(Channel(10), Channel(10), Channel(10))
 ) {
     val stdin: ReceiveChannel<String>
