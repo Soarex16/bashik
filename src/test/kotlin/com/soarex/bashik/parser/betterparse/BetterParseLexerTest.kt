@@ -23,6 +23,18 @@ internal class BetterParseLexerTest {
         @JvmStatic
         fun testData() = listOf(
             Arguments.of(
+                "    ",
+                emptySequence<Token>(),
+            ),
+            Arguments.of(
+                "\t",
+                emptySequence<Token>(),
+            ),
+            Arguments.of(
+                "\n",
+                emptySequence<Token>(),
+            ),
+            Arguments.of(
                 "SOME_VAR=\"string with space and some s/p/e/c/i/a/l symbols\" bash -c 'some_command come_arg | echo \$SOME_VAR'|cmd2 | some pipepipe",
                 sequenceOf(
                     WordToken("SOME_VAR=\"string with space and some s/p/e/c/i/a/l symbols\""),
