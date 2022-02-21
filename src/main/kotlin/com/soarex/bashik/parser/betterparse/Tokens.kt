@@ -1,6 +1,5 @@
 package com.soarex.bashik.parser.betterparse
 
-import com.github.h0tk3y.betterParse.lexer.literalToken
 import com.github.h0tk3y.betterParse.lexer.regexToken
 
 /**
@@ -15,17 +14,19 @@ import com.github.h0tk3y.betterParse.lexer.regexToken
  * но bash сам по себе убогий и богомерзкий
  */
 
-const val metaChars = " \t\r\n|&;()<>"
-const val singleQuotedString = "\'[^']*\'"
-const val doubleQuotedString = "\"(?:[^\"]|\\.)*\""
+const val metaCharsPattern = " \t\r\n|&;()<>"
+const val singleQuotedStringPattern = "\'[^']*\'"
+const val doubleQuotedStringPattern = "\"(?:[^\"]|\\.)*\""
+
+const val wordPattern = "(?:$doubleQuotedStringPattern|$singleQuotedStringPattern|[^$metaCharsPattern])+"
+const val namePattern = "[a-zA-Z_][\\w]*"
 
 // https://regex101.com/r/F85jjs/2
 // "(?:\"(?:[^\"]|\\.)*\"|\'[^']*\'|[^ \t\n|&;()<>])+"
-val wordToken = regexToken(name = "word", "(?:${doubleQuotedString}|${singleQuotedString}|[^${metaChars}])+")
-val metaCharToken = regexToken(name = "metaChar", "[${metaChars}]+")
+val wordToken = regexToken(name = "word", wordPattern)
+val metaCharToken = regexToken(name = "metaChar", "[$metaCharsPattern]+")
 
-val singleQuotedStringToken = regexToken(name = "singleQuotedString", singleQuotedString)
-val doubleQuotedStringToken = regexToken(name = "doubleQuotedString", doubleQuotedString)
+val singleQuotedStringToken = regexToken(name = "singleQuotedString", singleQuotedStringPattern)
+val doubleQuotedStringToken = regexToken(name = "doubleQuotedString", doubleQuotedStringPattern)
 
-val nameToken = regexToken(name = "name", "[a-zA-Z_][\\w]*")
-val eqToken = literalToken("=")
+val nameToken = regexToken(name = "name", namePattern)

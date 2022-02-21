@@ -33,4 +33,3 @@ class BetterParseLexer : Lexer {
         }.filterNotNull()
     }
 }
-

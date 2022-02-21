@@ -4,6 +4,9 @@ sealed interface Token {
     val text: String
 }
 
+@JvmInline
+value class MetaChar(override val text: String) : Token
+
 data class WordToken(override val text: String) : Token
 
 data class VariableAssignmentToken(val varName: String, val value: String) : Token {
@@ -11,10 +14,7 @@ data class VariableAssignmentToken(val varName: String, val value: String) : Tok
         get() = "$varName=$value"
 }
 
-@JvmInline
-value class MetaChar(override val text: String) : Token
-
-enum class Operator(override val text: String) : Token {
+enum class OperatorToken(override val text: String) : Token {
     PIPE("|"),
 //    AND("&&"),
 //    OR("||"),

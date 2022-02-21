@@ -100,6 +100,17 @@ internal class BetterParseLexerTest {
                     WordToken("'echo \$FOO_X'"),
                 ),
             ),
+            Arguments.of(
+                "cmd1 arg1 || cmd2 arg2 arg3",
+                sequenceOf(
+                    WordToken("cmd1"),
+                    WordToken("arg1"),
+                    MetaChar("||"),
+                    WordToken("cmd2"),
+                    WordToken("arg2"),
+                    WordToken("arg3"),
+                ),
+            ),
         )
     }
 }

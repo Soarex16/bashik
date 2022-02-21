@@ -5,4 +5,3 @@ import com.soarex.bashik.parser.lexer.WordToken
 fun QuoteRemoval(): Transform = transformToken<WordToken> {
     TODO()
 }
-
