@@ -37,4 +37,4 @@ jobs:
           flags: unittests # optional
           files: ./build/reports/jacoco/report.xml
           name: codecov-umbrella # optional
-          verbose: true # optional (default = false)
+          verbose: true # optional (default = false
