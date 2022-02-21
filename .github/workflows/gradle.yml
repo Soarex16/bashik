@@ -31,10 +31,9 @@ jobs:
           arguments: |
             build
             jacocoTestReport
-      - name: Code coverage
-        uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v2
         with:
           flags: unittests # optional
           files: ./build/reports/jacoco/report.xml
           name: codecov-umbrella # optional
-          verbose: true # optional (default = false
+          verbose: true # optional (default = false)
