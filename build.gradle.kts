@@ -1,5 +1,7 @@
 plugins {
     kotlin("jvm") version "1.6.10"
+    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
+    jacoco
 }
 
 group = "com.soarex"
@@ -23,6 +25,17 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
-tasks.getByName<Test>("test") {
+tasks.test {
     useJUnitPlatform()
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+        xml.outputLocation.set(File("$buildDir/reports/jacoco/report.xml"))
+        html.required.set(false)
+        csv.required.set(false)
+    }
+    executionData(File("build/jacoco/test.exec"))
+    dependsOn("test")
 }
