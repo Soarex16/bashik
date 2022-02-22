@@ -12,7 +12,7 @@ internal class BetterParseLexerTest {
     private val lexer = BetterParseLexer()
 
     @ParameterizedTest
-    @MethodSource("testData")
+    @MethodSource("tokenizeTestData")
     fun tokenize(input: String, expectedTokens: Sequence<Token>) {
         val tokens = lexer.tokenize(input)
 
@@ -21,7 +21,7 @@ internal class BetterParseLexerTest {
 
     companion object {
         @JvmStatic
-        fun testData() = listOf(
+        fun tokenizeTestData() = listOf(
             Arguments.of(
                 "    ",
                 emptySequence<Token>(),

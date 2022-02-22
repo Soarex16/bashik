@@ -16,7 +16,7 @@ import com.github.h0tk3y.betterParse.lexer.regexToken
 
 const val metaCharsPattern = " \t\r\n|&;()<>"
 const val singleQuotedStringPattern = "\'[^']*\'"
-const val doubleQuotedStringPattern = "\"(?:[^\"]|\\.)*\""
+const val doubleQuotedStringPattern = """"(?:[^\\"]|\\.)*""""
 
 const val wordPattern = "(?:$doubleQuotedStringPattern|$singleQuotedStringPattern|[^$metaCharsPattern])+"
 const val namePattern = "[a-zA-Z_][\\w]*"
