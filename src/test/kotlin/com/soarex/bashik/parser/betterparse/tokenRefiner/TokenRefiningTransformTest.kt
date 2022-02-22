@@ -14,7 +14,11 @@ import kotlin.test.assertEquals
 internal class TokenRefiningTransformTest {
     @ParameterizedTest
     @MethodSource("transformTestData")
-    fun transform(refiners: List<TokenRefiner>, tokens: Sequence<Token>, expectedTransformationResult: Sequence<Token?>) {
+    fun transform(
+        refiners: List<TokenRefiner>,
+        tokens: Sequence<Token>,
+        expectedTransformationResult: Sequence<Token?>
+    ) {
         val transform = TokenRefiningTransform(refiners)
 
         val transformationResult = transform.transform(tokens)
@@ -24,10 +28,12 @@ internal class TokenRefiningTransformTest {
 
     @Test
     fun throwsOnAmbiguousTransform() {
-        val transform = TokenRefiningTransform(listOf(
-            MockRefiner(),
-            MockRefiner()
-        ))
+        val transform = TokenRefiningTransform(
+            listOf(
+                MockRefiner(),
+                MockRefiner()
+            )
+        )
 
         val tokenSequence = sequenceOf(WordToken("foo"), WordToken("bar"))
 
@@ -38,19 +44,19 @@ internal class TokenRefiningTransformTest {
         assertEquals(tokenSequence.first(), exception.token)
     }
 
-    private class MockRefiner: TokenRefiner {
+    private class MockRefiner : TokenRefiner {
         override fun refine(tok: Token) = tok
 
         override fun isApplicable(tok: Token) = true
     }
 
-    private class ConstRefiner(val refiningResult: Token?): TokenRefiner {
+    private class ConstRefiner(val refiningResult: Token?) : TokenRefiner {
         override fun refine(tok: Token) = refiningResult
 
         override fun isApplicable(tok: Token) = true
     }
 
-    private class MockRefinerIsApplicable(private val applicable: Boolean = true): TokenRefiner {
+    private class MockRefinerIsApplicable(private val applicable: Boolean = true) : TokenRefiner {
         override fun refine(tok: Token) = tok
 
         override fun isApplicable(tok: Token) = applicable
