@@ -3,7 +3,7 @@ package com.soarex.bashik.parser.betterparse.tokenRefiner
 import com.soarex.bashik.parser.lexer.Token
 import com.soarex.bashik.parser.transformation.Transform
 
-class AmbiguousRefiningException : Exception()
+class AmbiguousRefiningException(val token: Token) : Exception("Ambiguous transformation of token $token")
 
 /**
  * Трансформация, которая осуществляет уточнение типов токенов,
@@ -28,7 +28,7 @@ class TokenRefiningTransform(private val refiners: List<TokenRefiner> = emptyLis
         return@map when {
             refiningResult.isEmpty() -> tok
             refiningResult.size == 1 -> refiningResult.single()
-            else -> throw AmbiguousRefiningException()
+            else -> throw AmbiguousRefiningException(tok)
         }
     }
 }
