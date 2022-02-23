@@ -1,5 +1,7 @@
 package com.soarex.bashik.parser.transformation
 
+import com.soarex.bashik.parser.lexer.MetaChar
+import com.soarex.bashik.parser.lexer.OperatorToken
 import com.soarex.bashik.parser.lexer.Token
 import com.soarex.bashik.parser.lexer.WordToken
 import org.junit.jupiter.params.ParameterizedTest
@@ -30,6 +32,33 @@ internal class WordSplittingTest {
                 sequenceOf(
                     WordToken("abc"),
                     WordToken("def"),
+                ),
+            ),
+            Arguments.of(
+                " \t\n",
+                sequenceOf(
+                    WordToken("cat 'hello world.txt'"),
+                    OperatorToken.PIPE,
+                    WordToken("echo"),
+                ),
+                sequenceOf(
+                    WordToken("cat"),
+                    WordToken("'hello world.txt'"),
+                    OperatorToken.PIPE,
+                    WordToken("echo"),
+                ),
+            ),
+            Arguments.of(
+                " \t\n",
+                sequenceOf(
+                    OperatorToken.PIPE,
+                    MetaChar("||"),
+                    MetaChar("some text with spaces"),
+                ),
+                sequenceOf(
+                    OperatorToken.PIPE,
+                    MetaChar("||"),
+                    MetaChar("some text with spaces"),
                 ),
             ),
             Arguments.of(
