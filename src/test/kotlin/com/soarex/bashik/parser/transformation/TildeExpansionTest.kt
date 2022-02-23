@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.nio.file.Path
 import kotlin.test.assertContentEquals
 
-internal class TildeExpansionKtTest {
+internal class TildeExpansionTest {
     @ParameterizedTest
     @MethodSource("tildeExpansionTestData")
     fun tildeExpansion(path: Path, inputSequence: Sequence<Token>, expectedRefinedSequence: Sequence<Token>) {
