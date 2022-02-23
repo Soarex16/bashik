@@ -12,12 +12,12 @@ import kotlin.test.assertContentEquals
 internal class TildeExpansionTest {
     @ParameterizedTest
     @MethodSource("tildeExpansionTestData")
-    fun tildeExpansion(path: Path, inputSequence: Sequence<Token>, expectedRefinedSequence: Sequence<Token>) {
+    fun tildeExpansion(path: Path, inputSequence: Sequence<Token>, expectedTransformedSequence: Sequence<Token>) {
         val transform = TildeExpansion(path)
 
         val transformationResult = transform.transform(inputSequence)
 
-        assertContentEquals(expectedRefinedSequence, transformationResult)
+        assertContentEquals(expectedTransformedSequence, transformationResult)
     }
 
     companion object {

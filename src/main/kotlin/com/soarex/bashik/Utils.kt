@@ -27,6 +27,9 @@ fun List<IntRange>.gaps(): List<IntRange> = zipWithNext()
  * ```
  */
 fun String.partsBetween(ranges: List<IntRange>): List<String> {
+    if (ranges.isEmpty())
+        return listOf(this)
+
     val parts = mutableListOf<String>()
 
     parts.add(substring(0, ranges.first().first))

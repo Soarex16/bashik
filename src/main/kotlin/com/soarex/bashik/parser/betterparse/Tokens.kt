@@ -18,7 +18,8 @@ const val metaCharsPattern = " \t\r\n|&;()<>"
 const val singleQuotedStringPattern = "\'[^']*\'"
 const val doubleQuotedStringPattern = """"(?:[^\\"]|\\.)*""""
 
-const val wordPattern = "(?:$doubleQuotedStringPattern|$singleQuotedStringPattern|[^$metaCharsPattern])+"
+const val stringPattern = "$doubleQuotedStringPattern|$singleQuotedStringPattern"
+const val wordPattern = "(?:$stringPattern|[^$metaCharsPattern])+"
 const val namePattern = "[a-zA-Z_][\\w]*"
 
 // https://regex101.com/r/F85jjs/2

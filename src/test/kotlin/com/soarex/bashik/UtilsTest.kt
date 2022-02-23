@@ -48,6 +48,10 @@ internal class StringUtilsTest {
                     15 until 20
                 )
             ),
+            Arguments.of(
+                emptyList<IntRange>(),
+                emptyList<IntRange>()
+            ),
         )
 
         @JvmStatic
@@ -70,19 +74,8 @@ internal class StringUtilsTest {
             ),
             Arguments.of(
                 "hellohellohellohello",
-                listOf(
-                    0 until 5,
-                    5 until 10,
-                    10 until 15,
-                    15 until 20
-                ),
-                listOf(
-                    "",
-                    "",
-                    "",
-                    "",
-                    ""
-                ),
+                emptyList<IntRange>(),
+                listOf("hellohellohellohello"),
             ),
         )
 
