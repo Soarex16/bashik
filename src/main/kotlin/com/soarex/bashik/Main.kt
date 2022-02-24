@@ -1,10 +1,6 @@
 package com.soarex.bashik
 
-import com.soarex.bashik.io.StandardStreams
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration.Companion.seconds
 
 val rootEnv = mapOf(
@@ -36,11 +32,11 @@ class EchoCommand : Command {
 }
 
 fun main() {
-    val commonStderr = Channel<String>(10)
+    /*val commonStderr = Channel<String>(10)
 
     val producerIO = StandardStreams(stderr = commonStderr)
     val echoIO = StandardStreams(stdin = producerIO.stdout, stderr = commonStderr)
-    val producerCmdEnv = Environment(parent = rootEnv)
+    val producerCmdEnv = MutableEnvironmentImpl(parent = rootEnv)
 
     val echoCmdEnv = mapOf(
         "echoArg" to "echoVal"
@@ -70,5 +66,5 @@ fun main() {
         for (x in echoIO.stdout) {
             println(x)
         }
-    }
+    }*/
 }

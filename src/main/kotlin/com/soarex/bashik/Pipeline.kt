@@ -1,8 +1,5 @@
 package com.soarex.bashik
 
-import com.soarex.bashik.io.StandardStreams
-import kotlinx.coroutines.channels.Channel
-
 // Pipeline отвечает за формирование последовательности процессов
 // и представляет собой композитный процесс
 interface Pipeline : Process {
@@ -26,19 +23,21 @@ class PipelineImpl : Pipeline {
     }
 
     private fun redirectIO(ctx: ProcessContext): List<Pair<Process, ProcessContext>> {
-        var prevStdout = ctx.stdin as Channel<String>
-
-        return stages.map { (proc, ctx) ->
-            val newStdout = StandardStreams.create()
-            val newIoConfig = StandardStreams(
-                stdin = prevStdout,
-                stderr = ctx.io.stderr as Channel<String>,
-                stdout = newStdout
-            )
-            prevStdout = newStdout
-
-            val newCtx = ctx.copy(io = newIoConfig)
-            Pair(proc, newCtx)
-        }
+        // var prevStdout = ctx.stdin as Channel<String>
+        //
+        // return stages.map { (proc, ctx) ->
+        //     val newStdout = StandardStreams.create()
+        //     val newIoConfig = StandardStreams(
+        //         stdin = prevStdout,
+        //         stderr = ctx.io.stderr as Channel<String>,
+        //         stdout = newStdout
+        //     )
+        //     prevStdout = newStdout
+        //
+        //     val newCtx = ctx.copy(io = newIoConfig)
+        //     Pair(proc, newCtx)
+        // }
+        // TODO: fix
+        return emptyList()
     }
 }

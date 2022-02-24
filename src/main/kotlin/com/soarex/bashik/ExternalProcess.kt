@@ -16,7 +16,7 @@ class ExternalProcess(private val cmd: String) : Process {
 
         builder.directory(ctx.workingDirectory.toFile())
 
-        val allVariables = ctx.env.collect()
+        val allVariables = ctx.collectEnv()
         val envMap = builder.environment()
         allVariables.forEach {
             envMap[it.key] = it.value
