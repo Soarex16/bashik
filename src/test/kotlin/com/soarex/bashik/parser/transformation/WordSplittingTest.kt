@@ -146,6 +146,27 @@ internal class WordSplittingTest {
                     WordToken("once"),
                 ),
             ),
+            Arguments.of(
+                " \t\n",
+                sequenceOf(
+                    WordToken("M_VAL=\"usr/share/\"'applications'"),
+                    WordToken("bash"),
+                    WordToken("-c"),
+                    WordToken("'cd \$M_VAL; ls;'"),
+                    MetaChar("&&"),
+                    WordToken("echo"),
+                    WordToken("\"finished\""),
+                ),
+                sequenceOf(
+                    WordToken("M_VAL=\"usr/share/\"'applications'"),
+                    WordToken("bash"),
+                    WordToken("-c"),
+                    WordToken("'cd \$M_VAL; ls;'"),
+                    MetaChar("&&"),
+                    WordToken("echo"),
+                    WordToken("\"finished\""),
+                ),
+            ),
         )
     }
 }

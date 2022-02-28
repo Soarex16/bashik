@@ -123,6 +123,25 @@ internal class BetterParseLexerTest {
                     WordToken("arg3"),
                 ),
             ),
+            Arguments.of(
+                "echo \"some double quoted test\"'some single quoted text'",
+                sequenceOf(
+                    WordToken("echo"),
+                    WordToken("\"some double quoted test\"'some single quoted text'"),
+                ),
+            ),
+            Arguments.of(
+                "M_VAL=\"usr/share/\"'applications' bash -c 'cd \$M_VAL; ls;' && echo \"finished\"",
+                sequenceOf(
+                    WordToken("M_VAL=\"usr/share/\"'applications'"),
+                    WordToken("bash"),
+                    WordToken("-c"),
+                    WordToken("'cd \$M_VAL; ls;'"),
+                    MetaChar("&&"),
+                    WordToken("echo"),
+                    WordToken("\"finished\""),
+                ),
+            ),
         )
     }
 }
