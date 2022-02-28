@@ -4,6 +4,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 internal class UtilsTest {
 
@@ -29,6 +30,25 @@ internal class UtilsTest {
         val actualResult = first.alternateWith(second).toList()
 
         assertContentEquals(expectedResult, actualResult)
+    }
+
+    @ParameterizedTest
+    @MethodSource("separateByTestData")
+    fun separateBy(
+        inputSequence: Sequence<String>,
+        separatorPredicate: (String) -> Boolean,
+        expectedResult: Sequence<Sequence<String>>
+    ) {
+        val expectedResultList = expectedResult.toList()
+
+        val actualResult = inputSequence
+            .separateBy(separatorPredicate)
+            .toList()
+
+        assertEquals(expectedResultList.size, actualResult.size, "Length mismatch")
+        expectedResultList
+            .zip(actualResult)
+            .forEach { (expected, actual) -> assertContentEquals(expected, actual) }
     }
 
     companion object {
@@ -176,6 +196,121 @@ internal class UtilsTest {
                     "4",
                     "test"
                 ),
+            ),
+        )
+
+        @JvmStatic
+        fun separateByTestData() = listOf(
+            Arguments.of(
+                sequenceOf(
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "separator",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                ),
+                { str: String -> str == "separator" },
+                sequenceOf(
+                    sequenceOf(
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                    ),
+                    sequenceOf(
+                        "5",
+                        "6",
+                        "7",
+                        "8",
+                    ),
+                ),
+            ),
+            Arguments.of(
+                sequenceOf(
+                    "1",
+                    "2",
+                    "separator",
+                    "3",
+                    "4",
+                    "separator",
+                    "5",
+                    "6",
+                    "separator",
+                ),
+                { str: String -> str == "separator" },
+                sequenceOf(
+                    sequenceOf(
+                        "1",
+                        "2",
+                    ),
+                    sequenceOf(
+                        "3",
+                        "4",
+                    ),
+                    sequenceOf(
+                        "5",
+                        "6",
+                    ),
+                    emptySequence(),
+                ),
+            ),
+            Arguments.of(
+                sequenceOf(
+                    "1",
+                    "2",
+                    "3",
+                ),
+                { _: String -> true },
+                sequenceOf<Sequence<String>>(
+                    emptySequence(),
+                    emptySequence(),
+                    emptySequence(),
+                    emptySequence(),
+                ),
+            ),
+            Arguments.of(
+                sequenceOf(
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                ),
+                { _: String -> false },
+                sequenceOf(
+                    sequenceOf(
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                    ),
+                ),
+            ),
+            Arguments.of(
+                sequenceOf(
+                    "separator",
+                    "separator",
+                    "separator",
+                ),
+                { str: String -> str == "separator" },
+                sequenceOf<Sequence<String>>(
+                    emptySequence(),
+                    emptySequence(),
+                    emptySequence(),
+                    emptySequence(),
+                ),
+            ),
+            Arguments.of(
+                emptySequence<String>(),
+                { str: String -> str == "separator" },
+                emptySequence<Sequence<String>>(),
             ),
         )
     }

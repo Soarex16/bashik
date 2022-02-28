@@ -63,3 +63,24 @@ fun <T> List<T>.alternateWith(other: List<T>): Sequence<T> = sequence {
     yieldAll(first)
     yieldAll(second)
 }
+
+/**
+ * Формирует подпоследовательности элементов, разделенные элементами, удовлетворяющими предикату [isSeparator]
+ */
+fun <T> Sequence<T>.separateBy(isSeparator: (T) -> Boolean): Sequence<Sequence<T>> = sequence {
+    var partition = mutableListOf<T>()
+
+    var sequenceIsNotEmpty = false
+
+    forEach {
+        sequenceIsNotEmpty = true
+        if (isSeparator(it)) {
+            yield(partition.asSequence())
+            partition = mutableListOf()
+        } else {
+            partition.add(it)
+        }
+    }
+
+    if (sequenceIsNotEmpty) yield(partition.asSequence())
+}
