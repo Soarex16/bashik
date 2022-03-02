@@ -4,11 +4,11 @@ import com.soarex.bashik.parser.lexer.OperatorToken
 import com.soarex.bashik.parser.lexer.Token
 import com.soarex.bashik.parser.lexer.VariableAssignmentToken
 import com.soarex.bashik.parser.lexer.WordToken
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 internal class DefaultParserTest {
 
@@ -16,17 +16,17 @@ internal class DefaultParserTest {
 
     @ParameterizedTest
     @MethodSource("parseTestData")
-    fun parse(tokens: Sequence<Token>, expectedResult: Sequence<CommandDefinition>) {
+    fun parse(tokens: Sequence<Token>, expectedResult: CommandDefinition) {
         val commands = parser.parse(tokens)
 
-        assertContentEquals(expectedResult, commands)
+        assertEquals(expectedResult, commands)
     }
 
     @ParameterizedTest
     @MethodSource("parseThrowsOnIncorrectInputTestData")
-    fun parseThrowsOnIncorrectInput(tokens: Sequence<Token>) {
-        assertThrows<UnparsedRemainderException> {
-            parser.parse(tokens).toList()
+    fun parseThrowsOnIncorrectInput(tokens: Sequence<Token>, exceptionClass: Class<Throwable>) {
+        Assertions.assertThrows(exceptionClass) {
+            parser.parse(tokens)
         }
     }
 
@@ -34,22 +34,16 @@ internal class DefaultParserTest {
         @JvmStatic
         fun parseTestData() = listOf(
             Arguments.of(
-                emptySequence<Token>(),
-                emptySequence<CommandDefinition>(),
-            ),
-            Arguments.of(
                 sequenceOf(
                     WordToken("cat"),
                     WordToken("test.txt"),
                 ),
-                sequenceOf(
-                    CommandDefinition(
-                        emptyMap(),
+                BasicCommand(
+                    emptyMap(),
+                    "cat",
+                    listOf(
                         "cat",
-                        listOf(
-                            "cat",
-                            "test.txt",
-                        ),
+                        "test.txt",
                     ),
                 ),
             ),
@@ -61,21 +55,23 @@ internal class DefaultParserTest {
                     WordToken("grep"),
                     WordToken("some text"),
                 ),
-                sequenceOf(
-                    CommandDefinition(
-                        emptyMap(),
-                        "cat",
-                        listOf(
+                Pipeline(
+                    listOf(
+                        BasicCommand(
+                            emptyMap(),
                             "cat",
-                            "test.txt",
+                            listOf(
+                                "cat",
+                                "test.txt",
+                            ),
                         ),
-                    ),
-                    CommandDefinition(
-                        emptyMap(),
-                        "grep",
-                        listOf(
+                        BasicCommand(
+                            emptyMap(),
                             "grep",
-                            "some text",
+                            listOf(
+                                "grep",
+                                "some text",
+                            ),
                         ),
                     ),
                 ),
@@ -87,17 +83,15 @@ internal class DefaultParserTest {
                     WordToken("-c"),
                     WordToken("'cd \$HOME; ls;'"),
                 ),
-                sequenceOf(
-                    CommandDefinition(
-                        mapOf(
-                            "HOME" to "/some_volume/users/some_usr",
-                        ),
+                BasicCommand(
+                    mapOf(
+                        "HOME" to "/some_volume/users/some_usr",
+                    ),
+                    "bash",
+                    listOf(
                         "bash",
-                        listOf(
-                            "bash",
-                            "-c",
-                            "'cd \$HOME; ls;'",
-                        ),
+                        "-c",
+                        "'cd \$HOME; ls;'",
                     ),
                 ),
             ),
@@ -107,15 +101,13 @@ internal class DefaultParserTest {
                     WordToken("-e"),
                     WordToken("\\nRemoving \\t backslash \\t characters\\n"),
                 ),
-                sequenceOf(
-                    CommandDefinition(
-                        emptyMap(),
+                BasicCommand(
+                    emptyMap(),
+                    "echo",
+                    listOf(
                         "echo",
-                        listOf(
-                            "echo",
-                            "-e",
-                            "\\nRemoving \\t backslash \\t characters\\n",
-                        ),
+                        "-e",
+                        "\\nRemoving \\t backslash \\t characters\\n",
                     ),
                 ),
             ),
@@ -126,20 +118,22 @@ internal class DefaultParserTest {
                     OperatorToken.PIPE,
                     WordToken("sort"),
                 ),
-                sequenceOf(
-                    CommandDefinition(
-                        emptyMap(),
-                        "cat",
-                        listOf(
+                Pipeline(
+                    listOf(
+                        BasicCommand(
+                            emptyMap(),
                             "cat",
-                            "file1.txt",
+                            listOf(
+                                "cat",
+                                "file1.txt",
+                            ),
                         ),
-                    ),
-                    CommandDefinition(
-                        emptyMap(),
-                        "sort",
-                        listOf(
+                        BasicCommand(
+                            emptyMap(),
                             "sort",
+                            listOf(
+                                "sort",
+                            ),
                         ),
                     ),
                 ),
@@ -155,6 +149,11 @@ internal class DefaultParserTest {
                     OperatorToken.PIPE,
                     OperatorToken.PIPE,
                 ),
+                UnparsedRemainderException::class.java
+            ),
+            Arguments.of(
+                emptySequence<Token>(),
+                IllegalArgumentException::class.java
             ),
         )
     }

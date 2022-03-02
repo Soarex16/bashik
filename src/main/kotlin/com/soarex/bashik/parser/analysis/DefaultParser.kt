@@ -11,10 +11,13 @@ class UnparsedRemainderException : Exception()
  * Default implementation of [CommandParser]
  */
 class DefaultParser : CommandParser {
-    override fun parse(tokens: Sequence<Token>): Sequence<CommandDefinition> = sequence {
-        tokens
+    override fun parse(tokens: Sequence<Token>): CommandDefinition {
+        if (!tokens.any())
+            throw IllegalArgumentException()
+
+        val childCommands = tokens
             .separateBy { it == OperatorToken.PIPE }
-            .forEach { tokenSequence ->
+            .map { tokenSequence ->
                 var commandTokens = tokenSequence.toList()
 
                 if (commandTokens.isEmpty()) throw UnparsedRemainderException()
@@ -33,7 +36,9 @@ class DefaultParser : CommandParser {
                     .map { it.text }
                     .toList()
 
-                yield(CommandDefinition(commandEnvironment, cmd, args))
-            }
+                BasicCommand(commandEnvironment, cmd, args)
+            }.toList()
+
+        return if (childCommands.size == 1) childCommands.first() else Pipeline(childCommands)
     }
 }

@@ -5,10 +5,8 @@ import com.soarex.bashik.parser.lexer.Lexer
 import com.soarex.bashik.parser.lexer.Token
 import com.soarex.bashik.parser.transformation.Transform
 
-data class CommandDefinition(val envVars: Map<String, String> = emptyMap(), val command: String, val args: List<String>)
-
 fun interface CommandParser {
-    fun parse(tokens: Sequence<Token>): Sequence<CommandDefinition>
+    fun parse(tokens: Sequence<Token>): CommandDefinition
 }
 
 fun parse(
@@ -16,7 +14,7 @@ fun parse(
     parser: CommandParser = DefaultParser(),
     transforms: List<Transform> = listOf(),
     input: String
-): Sequence<CommandDefinition> {
+): CommandDefinition {
     // TODO: exception handling
     val tokens = lexer.tokenize(input)
     val transformedTokens = transforms.fold(tokens) { tokenSequence, trans ->
