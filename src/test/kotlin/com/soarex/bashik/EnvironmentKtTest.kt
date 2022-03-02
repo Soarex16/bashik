@@ -1,5 +1,7 @@
 package com.soarex.bashik
 
+import com.soarex.bashik.runtime.ProcessContext
+import com.soarex.bashik.runtime.ProcessContextImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
