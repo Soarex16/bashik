@@ -15,3 +15,6 @@ data class BasicCommand(val envVars: Map<String, String> = emptyMap(), val comma
  * Represents pipeline of commands like `cat some_file.txt | sort`
  */
 data class Pipeline(val commands: List<BasicCommand>) : CommandDefinition
+
+class UnknownCommandTypeException(command: CommandDefinition) :
+    Exception("Unknown command type ${command::class.java.name}")

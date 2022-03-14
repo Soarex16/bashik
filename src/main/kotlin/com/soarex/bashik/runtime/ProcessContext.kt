@@ -1,9 +1,11 @@
-package com.soarex.bashik
+package com.soarex.bashik.runtime
 
-import com.soarex.bashik.io.ProcessStreams
-import com.soarex.bashik.io.StandardStreams
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.SendChannel
+import com.soarex.bashik.Environment
+import com.soarex.bashik.MutableEnvironment
+import com.soarex.bashik.runtime.io.InputStream
+import com.soarex.bashik.runtime.io.OutputStream
+import com.soarex.bashik.runtime.io.ProcessStreams
+import com.soarex.bashik.runtime.io.StandardStreams
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -17,13 +19,13 @@ interface ProcessContext {
     val args: List<String>
     val io: ProcessStreams
 
-    val stdin: ReceiveChannel<String>
+    val stdin: InputStream<String>
         get() = io.stdin
 
-    val stdout: SendChannel<String>
+    val stdout: OutputStream<String>
         get() = io.stdout
 
-    val stderr: SendChannel<String>
+    val stderr: OutputStream<String>
         get() = io.stderr
 }
 
@@ -44,5 +46,5 @@ data class ProcessContextImpl(
     override val env: MutableEnvironment,
     override val workingDirectory: Path = parent?.workingDirectory ?: Paths.get("").toAbsolutePath(),
     override val args: List<String> = emptyList(),
-    override val io: ProcessStreams = parent?.io ?: StandardStreams()
+    override var io: ProcessStreams = parent?.io ?: StandardStreams()
 ) : MutableProcessContext

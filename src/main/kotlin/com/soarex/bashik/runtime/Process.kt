@@ -1,4 +1,4 @@
-package com.soarex.bashik
+package com.soarex.bashik.runtime
 
 /**
  * Процесс - это некоторая корутина, принимающая на вход свой контекст исполнения

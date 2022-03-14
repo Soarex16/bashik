@@ -1,5 +1,7 @@
 package com.soarex.bashik
 
+import com.soarex.bashik.runtime.ProcessContext
+
 /**
  * Represents read-only environment of a program as a key-value collection of strings
  */

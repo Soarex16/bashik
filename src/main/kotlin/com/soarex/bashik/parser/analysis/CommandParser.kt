@@ -9,17 +9,15 @@ fun interface CommandParser {
     fun parse(tokens: Sequence<Token>): CommandDefinition
 }
 
-fun parse(
+fun createParser(
     lexer: Lexer = BetterParseLexer(),
     parser: CommandParser = DefaultParser(),
     transforms: List<Transform> = listOf(),
-    input: String
-): CommandDefinition {
-    // TODO: exception handling
+): (String) -> CommandDefinition = { input ->
     val tokens = lexer.tokenize(input)
     val transformedTokens = transforms.fold(tokens) { tokenSequence, trans ->
         trans.transform(tokenSequence)
     }
 
-    return parser.parse(transformedTokens)
+    parser.parse(transformedTokens)
 }
