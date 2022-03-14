@@ -1,6 +1,6 @@
 package com.soarex.bashik.commands
 
-import com.soarex.bashik.command
+import com.soarex.bashik.runtime.command
 import com.soarex.bashik.runtime.exitCode
 import com.soarex.bashik.runtime.io.forEach
 import kotlin.io.path.Path

@@ -1,6 +1,5 @@
 package com.soarex.bashik.runtime
 
-import com.soarex.bashik.Command
 import com.soarex.bashik.commands.cat
 import com.soarex.bashik.commands.echo
 import com.soarex.bashik.commands.exit

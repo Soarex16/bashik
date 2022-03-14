@@ -1,9 +1,4 @@
-package com.soarex.bashik
-
-import com.soarex.bashik.runtime.CommandRegistry
-import com.soarex.bashik.runtime.Process
-import com.soarex.bashik.runtime.ProcessContext
-import com.soarex.bashik.runtime.ProcessResult
+package com.soarex.bashik.runtime
 
 /**
  * Generic interface for command definition
