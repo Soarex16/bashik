@@ -9,6 +9,8 @@ import com.soarex.bashik.runtime.io.InputStream
 import com.soarex.bashik.runtime.io.OutputStream
 import com.soarex.bashik.runtime.io.ProcessStreams
 import com.soarex.bashik.runtime.io.createPipe
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 class ProcessExecutorImpl : ProcessExecutor {
     override suspend fun runWithContext(ctx: ProcessContext, command: CommandDefinition): ProcessResult =
@@ -59,9 +61,12 @@ class ProcessExecutorImpl : ProcessExecutor {
             override val stderr: OutputStream<String> = lastPipeCommandContext.stderr
         }
 
-        return def.commands
-            .zip(contexts)
-            .map { (cmd, ctx) -> runCommand(cmd, ctx) }
-            .last()
+        return coroutineScope {
+            def.commands
+                .zip(contexts)
+                .map { (cmd, ctx) -> async { runCommand(cmd, ctx) } }
+                .last()
+                .await()
+        }
     }
 }

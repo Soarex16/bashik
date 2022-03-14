@@ -19,3 +19,11 @@ fun <T> createPipe(): Pipe<T> {
 
     return Pipe(source, sink)
 }
+
+suspend fun <T> pump(from: InputStream<T>, to: OutputStream<T>) {
+    var input: T? = from.read()
+    while (input != null) {
+        to.write(input)
+        input = from.read()
+    }
+}

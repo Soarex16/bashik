@@ -2,30 +2,34 @@ package com.soarex.bashik.runtime
 
 import com.soarex.bashik.collectEnv
 import com.soarex.bashik.parser.analysis.BasicCommand
+import com.soarex.bashik.runtime.io.ConsoleInputStream
+import com.soarex.bashik.runtime.io.ConsoleOutputStream
 import com.soarex.bashik.runtime.io.ProcessStreams
+import com.soarex.bashik.runtime.io.pump
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
+import java.io.PrintStream
+import java.lang.Process as JProcess
 
 class ExternalProcess(cmd: BasicCommand) : Process {
-    private val stdin: File = File.createTempFile("${cmd.command}_stdin", null)
-    private val stdout: File = File.createTempFile("${cmd.command}_stdout", null)
-    private val stderr: File = File.createTempFile("${cmd.command}_stderr", null)
-
-    private fun configureRedirects(builder: ProcessBuilder) {
-        builder.redirectInput(ProcessBuilder.Redirect.from(stdin))
-        builder.redirectOutput(ProcessBuilder.Redirect.to(stdout))
-        builder.redirectError(ProcessBuilder.Redirect.to(stderr))
+    private suspend fun redirectIO(proc: JProcess, io: ProcessStreams) = coroutineScope {
+        launch {
+            val procIn = ConsoleOutputStream(PrintStream(proc.outputStream))
+            pump(io.stdin, procIn)
+        }
+        launch {
+            val procOut = ConsoleInputStream(proc.inputStream)
+            pump(procOut, io.stdout)
+        }
+        launch {
+            val procErr = ConsoleInputStream(proc.errorStream)
+            pump(procErr, io.stderr)
+        }
     }
 
-    private fun mirrorOutput(io: ProcessStreams) {
-        // TODO: make async io
-        stdout.forEachLine { line -> runBlocking { io.stdout.write(line) } }
-        stderr.forEachLine { line -> runBlocking { io.stderr.write(line) } }
-    }
-
-    override suspend fun invoke(ctx: ProcessContext): ProcessResult {
+    override suspend fun invoke(ctx: ProcessContext): ProcessResult = withContext(Dispatchers.IO) {
         val builder = ProcessBuilder(ctx.args)
 
         builder.directory(ctx.workingDirectory.toFile())
@@ -36,15 +40,16 @@ class ExternalProcess(cmd: BasicCommand) : Process {
             envMap[it.key] = it.value
         }
 
-        configureRedirects(builder)
-
-        val code = withContext(Dispatchers.IO) {
-            val process = builder.start()
-            process.waitFor()
+        val process = try {
+            builder.start()
+        } catch (e: RuntimeException) {
+            throw ExternalProcessStartException(e)
         }
 
-        mirrorOutput(ctx.io)
+        redirectIO(process, ctx.io)
 
-        return code.exitCode
+        process.waitFor().exitCode
     }
 }
+
+class ExternalProcessStartException(e: RuntimeException) : Throwable()
