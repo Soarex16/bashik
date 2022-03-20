@@ -29,7 +29,12 @@ class ProcessExecutorImpl : ProcessExecutor {
         )
         val command = CommandRegistry[def.command] ?: ExternalProcess(def)
 
-        return command.invoke(ctx)
+        return try {
+            command.invoke(ctx)
+        } catch (e: CommandNotFoundException) {
+            parentCtx.stdout.write("command not found: ${def.command}")
+            return 127.exitCode
+        }
     }
 
     private suspend fun runPipeline(def: Pipeline, parentCtx: ProcessContext): ProcessResult {

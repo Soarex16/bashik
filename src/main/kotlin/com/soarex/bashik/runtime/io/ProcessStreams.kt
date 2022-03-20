@@ -3,11 +3,15 @@ package com.soarex.bashik.runtime.io
 import kotlinx.coroutines.channels.Channel
 
 interface InputStream<T> {
+    val isOpen: Boolean
     suspend fun read(): T?
+    suspend fun close()
 }
 
 interface OutputStream<T> {
+    val isOpen: Boolean
     suspend fun write(element: T)
+    suspend fun close()
 }
 
 interface IOStream<T> : InputStream<T>, OutputStream<T>

@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import java.io.PrintStream
 import java.lang.Process as JProcess
 
@@ -44,6 +45,8 @@ class ExternalProcess(cmd: BasicCommand) : Process {
             builder.start()
         } catch (e: RuntimeException) {
             throw ExternalProcessStartException(e)
+        } catch (e: IOException) {
+            throw CommandNotFoundException(e)
         }
 
         redirectIO(process, ctx.io)
@@ -51,5 +54,7 @@ class ExternalProcess(cmd: BasicCommand) : Process {
         process.waitFor().exitCode
     }
 }
+
+class CommandNotFoundException(e: IOException) : Throwable()
 
 class ExternalProcessStartException(e: RuntimeException) : Throwable()
