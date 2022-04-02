@@ -6,10 +6,12 @@ import com.github.ajalt.clikt.parameters.arguments.validate
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.types.file
+import com.github.ajalt.clikt.parameters.types.defaultStdin
+import com.github.ajalt.clikt.parameters.types.inputStream
 import com.github.ajalt.clikt.parameters.types.int
 import com.github.ajalt.clikt.parameters.types.restrictTo
 import com.soarex.bashik.windowed
+import java.nio.file.FileSystems
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
@@ -35,12 +37,13 @@ class GrepCommand : CliktCommand(autoCompleteEnvvar = null) {
         }
 
     private val file by argument()
-        .file(mustExist = true, canBeDir = false, mustBeReadable = true)
+        .inputStream(FileSystems.getDefault())
+        .defaultStdin()
 
     override fun run() {
         val re = prepareRegex()
 
-        file.windowed(1 + printNextLines) { lines ->
+        file.reader().windowed(1 + printNextLines) { lines ->
             val firstLine = lines.first()
             if (re.containsMatchIn(firstLine)) {
                 lines.forEach { echo(it) }

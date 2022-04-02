@@ -59,7 +59,7 @@ fun cliktCommand(cmd: CliktCommand): Command {
 /**
  * Helper class for replacing default IO in Clikt commands
  */
-class BashikConsoleAdapter(val ctx: ProcessContext) : CliktConsole {
+class BashikConsoleAdapter(private val ctx: ProcessContext) : CliktConsole {
     override fun promptForLine(prompt: String, hideInput: Boolean): String? {
         if (hideInput) throw UnsupportedOperationException()
 
