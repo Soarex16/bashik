@@ -1,5 +1,9 @@
 package com.soarex.bashik
 
+import java.io.File
+import java.io.Reader
+import java.util.LinkedList
+
 /**
  * Формирует список диапазонов из промежутков между диапазонами
  *
@@ -83,4 +87,27 @@ fun <T> Sequence<T>.separateBy(isSeparator: (T) -> Boolean): Sequence<Sequence<T
     }
 
     if (sequenceIsNotEmpty) yield(partition.asSequence())
+}
+
+fun Reader.windowed(linesCount: Int, action: (lines: List<String>) -> Unit) {
+    require(linesCount > 0)
+
+    val buffer = LinkedList<String>()
+    this.forEachLine {
+        if (buffer.size == linesCount) {
+            action(buffer.toList())
+            buffer.removeFirst()
+        }
+
+        buffer.addLast(it)
+    }
+
+    for (i in 1..buffer.size) {
+        action(buffer.toList())
+        buffer.removeFirst()
+    }
+}
+
+fun File.windowed(linesCount: Int, action: (lines: List<String>) -> Unit) {
+    this.bufferedReader().windowed(linesCount, action)
 }

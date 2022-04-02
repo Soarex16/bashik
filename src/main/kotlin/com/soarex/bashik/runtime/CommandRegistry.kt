@@ -1,6 +1,7 @@
 package com.soarex.bashik.runtime
 
 import com.soarex.bashik.commands.cat
+import com.soarex.bashik.commands.clikt.grep
 import com.soarex.bashik.commands.echo
 import com.soarex.bashik.commands.exit
 import com.soarex.bashik.commands.pwd
@@ -13,6 +14,7 @@ object CommandRegistry {
         "pwd" to pwd,
         "wc" to wc,
         "exit" to exit,
+        "grep" to grep,
     )
 
     fun register(name: String, cmd: Command) {

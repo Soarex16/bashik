@@ -7,8 +7,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.io.InputStream as JavaInputStream
 import java.io.PrintStream as JavaPrintStream
 
-class ConsoleInputStream(inputStream: JavaInputStream) : InputStream<String> {
-    private val input = inputStream.bufferedReader()
+class ConsoleInputStream(underlyingStream: JavaInputStream) : InputStream<String> {
+    private val input = underlyingStream.bufferedReader()
     private val streamOpened = AtomicBoolean(true)
 
     override suspend fun read() = withContext(Dispatchers.IO) {

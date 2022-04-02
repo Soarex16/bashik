@@ -3,6 +3,7 @@ package com.soarex.bashik
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.io.StringReader
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
@@ -49,6 +50,19 @@ internal class UtilsTest {
         expectedResultList
             .zip(actualResult)
             .forEach { (expected, actual) -> assertContentEquals(expected, actual) }
+    }
+
+    @ParameterizedTest
+    @MethodSource("windowedTestData")
+    fun windowed(inputString: String, linesCount: Int, expectedResult: List<List<String>>) {
+        val reader = StringReader(inputString)
+
+        val actualResult = mutableListOf<List<String>>()
+        reader.windowed(linesCount) {
+            actualResult.add(it)
+        }
+
+        assertContentEquals(expectedResult, actualResult)
     }
 
     companion object {
@@ -311,6 +325,142 @@ internal class UtilsTest {
                 emptySequence<String>(),
                 { str: String -> str == "separator" },
                 emptySequence<Sequence<String>>(),
+            ),
+        )
+
+        @JvmStatic
+        fun windowedTestData() = listOf(
+            Arguments.of(
+                """
+                    1
+                    2
+                    3
+                    4
+                    5
+                    6
+                    7
+                    8
+                """.trimIndent(),
+                1,
+                listOf(
+                    listOf("1"),
+                    listOf("2"),
+                    listOf("3"),
+                    listOf("4"),
+                    listOf("5"),
+                    listOf("6"),
+                    listOf("7"),
+                    listOf("8"),
+                )
+            ),
+            Arguments.of(
+                """
+                    1
+                    2
+                    3
+                    4
+                    5
+                    6
+                    7
+                    8
+                """.trimIndent(),
+                4,
+                listOf(
+                    listOf(
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                    ),
+                    listOf(
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                    ),
+                    listOf(
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                    ),
+                    listOf(
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                    ),
+                    listOf(
+                        "5",
+                        "6",
+                        "7",
+                        "8",
+                    ),
+                    listOf(
+                        "6",
+                        "7",
+                        "8",
+                    ),
+                    listOf(
+                        "7",
+                        "8",
+                    ),
+                    listOf(
+                        "8",
+                    ),
+                )
+            ),
+            Arguments.of(
+                """
+                    1
+                    2
+                    3
+                    4
+                    5
+                    6
+                    7
+                    8
+                """.trimIndent(),
+                3,
+                listOf(
+                    listOf(
+                        "1",
+                        "2",
+                        "3",
+                    ),
+                    listOf(
+                        "2",
+                        "3",
+                        "4",
+                    ),
+                    listOf(
+                        "3",
+                        "4",
+                        "5",
+                    ),
+                    listOf(
+                        "4",
+                        "5",
+                        "6",
+                    ),
+                    listOf(
+                        "5",
+                        "6",
+                        "7",
+                    ),
+                    listOf(
+                        "6",
+                        "7",
+                        "8",
+                    ),
+                    listOf(
+                        "7",
+                        "8",
+                    ),
+                    listOf(
+                        "8",
+                    ),
+                )
             ),
         )
     }

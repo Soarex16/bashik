@@ -18,6 +18,7 @@ dependencies {
     implementation("org.slf4j", "slf4j-simple", "1.7.30")
     implementation("io.github.microutils:kotlin-logging:2.1.21")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    implementation("com.github.ajalt.clikt:clikt:3.4.0")
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
