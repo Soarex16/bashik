@@ -5,6 +5,7 @@ import com.soarex.bashik.runtime.exitCode
 import com.soarex.bashik.runtime.io.forEach
 import kotlin.io.path.Path
 import kotlin.io.path.forEachLine
+import kotlin.io.path.isDirectory
 import kotlin.io.path.notExists
 import kotlin.system.exitProcess
 
@@ -15,7 +16,7 @@ val cat = command {
         }
     } else {
         args.drop(1).forEach {
-            val filePath = Path(it)
+            val filePath = workingDirectory.resolve(it)
 
             if (filePath.notExists()) {
                 stderr.write("cat: $it: No such file or directory")
@@ -59,7 +60,7 @@ val wc = command {
         }
     } else {
         args.drop(1).forEach {
-            val filePath = Path(it)
+            val filePath = workingDirectory.resolve(it)
 
             if (filePath.notExists()) {
                 stderr.write("wc: $it: No such file or directory")
@@ -79,6 +80,58 @@ val wc = command {
                 stats.chars.toString().padStart(8) +
                 " " + file
         )
+    }
+
+    return@command 0.exitCode
+}
+
+val cd = command {
+    when (args.size) {
+        1 -> parent?.workingDirectory = Path(System.getProperty("user.home"))
+        2 -> {
+            val filePath = workingDirectory.resolve(Path(args[1]))
+
+            if (filePath.notExists()) {
+                stderr.write("cd: ${args[1]}: No such file or directory")
+                return@command 1.exitCode
+            }
+            if (!filePath.isDirectory()) {
+                stderr.write("cd: ${args[1]}: Not a directory")
+                return@command 1.exitCode
+            }
+
+            parent?.workingDirectory = filePath
+        }
+        else -> {
+            stderr.write("cd: too many arguments")
+            return@command 1.exitCode
+        }
+    }
+    return@command 0.exitCode
+}
+
+val ls = command {
+    if (args.size > 2) {
+        stderr.write("ls: too many arguments")
+        return@command 1.exitCode
+    }
+    val filePath = if (args.size == 1) {
+        workingDirectory
+    } else {
+        workingDirectory.resolve(Path(args[1]))
+    }
+
+    if (filePath.notExists()) {
+        stderr.write("ls: ${args[1]}: No such file or directory")
+        return@command 1.exitCode
+    }
+
+    if (!filePath.isDirectory()) {
+        stdout.write(filePath.fileName.toString())
+    } else {
+        filePath.toFile().list { _, name -> !name.startsWith(".") }!!
+            .joinToString("  ")
+            .let { stdout.write(it) }
     }
 
     return@command 0.exitCode
