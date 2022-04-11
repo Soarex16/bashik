@@ -7,7 +7,7 @@ import com.soarex.bashik.runtime.io.OutputStream
 import com.soarex.bashik.runtime.io.ProcessStreams
 import com.soarex.bashik.runtime.io.StandardStreams
 import java.nio.file.Path
-import java.nio.file.Paths
+import kotlin.io.path.Path
 
 /**
  * Represents running process context
@@ -15,7 +15,7 @@ import java.nio.file.Paths
 interface ProcessContext {
     val parent: ProcessContext?
     val env: Environment
-    val workingDirectory: Path
+    var workingDirectory: Path
     val args: List<String>
     val io: ProcessStreams
 
@@ -44,7 +44,7 @@ interface MutableProcessContext : ProcessContext {
 data class ProcessContextImpl(
     override val parent: ProcessContext? = null,
     override val env: MutableEnvironment,
-    override val workingDirectory: Path = parent?.workingDirectory ?: Paths.get("").toAbsolutePath(),
+    override var workingDirectory: Path = parent?.workingDirectory ?: Path(System.getProperty("user.dir")),
     override val args: List<String> = emptyList(),
     override var io: ProcessStreams = parent?.io ?: StandardStreams()
 ) : MutableProcessContext

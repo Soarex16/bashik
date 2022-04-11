@@ -1,11 +1,7 @@
 package com.soarex.bashik.runtime
 
-import com.soarex.bashik.commands.cat
+import com.soarex.bashik.commands.*
 import com.soarex.bashik.commands.clikt.grep
-import com.soarex.bashik.commands.echo
-import com.soarex.bashik.commands.exit
-import com.soarex.bashik.commands.pwd
-import com.soarex.bashik.commands.wc
 
 object CommandRegistry {
     private val commands: MutableMap<String, Command> = mutableMapOf(
@@ -15,6 +11,8 @@ object CommandRegistry {
         "wc" to wc,
         "exit" to exit,
         "grep" to grep,
+        "cd" to cd,
+        "ls" to ls
     )
 
     fun register(name: String, cmd: Command) {
