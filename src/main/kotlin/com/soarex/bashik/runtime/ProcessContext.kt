@@ -34,6 +34,8 @@ interface ProcessContext {
  */
 interface MutableProcessContext : ProcessContext {
     override val env: MutableEnvironment // можем мутировать свой контекст, но не родительский
+
+    override var workingDirectory: Path
 }
 
 /**
@@ -44,7 +46,7 @@ interface MutableProcessContext : ProcessContext {
 data class ProcessContextImpl(
     override val parent: ProcessContext? = null,
     override val env: MutableEnvironment,
-    override val workingDirectory: Path = parent?.workingDirectory ?: Paths.get("").toAbsolutePath(),
+    override var workingDirectory: Path = parent?.workingDirectory ?: Paths.get("").toAbsolutePath(),
     override val args: List<String> = emptyList(),
     override var io: ProcessStreams = parent?.io ?: StandardStreams()
 ) : MutableProcessContext
