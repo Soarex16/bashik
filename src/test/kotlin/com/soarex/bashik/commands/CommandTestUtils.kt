@@ -2,15 +2,8 @@ package com.soarex.bashik.commands
 
 import com.soarex.bashik.MutableEnvironment
 import com.soarex.bashik.env
-import com.soarex.bashik.runtime.Command
-import com.soarex.bashik.runtime.ProcessContextImpl
-import com.soarex.bashik.runtime.ProcessResult
-import com.soarex.bashik.runtime.exitCode
-import com.soarex.bashik.runtime.io.InputStream
-import com.soarex.bashik.runtime.io.OutputStream
-import com.soarex.bashik.runtime.io.ProcessStreams
-import com.soarex.bashik.runtime.io.StringInputStream
-import com.soarex.bashik.runtime.io.StringOutputStream
+import com.soarex.bashik.runtime.*
+import com.soarex.bashik.runtime.io.*
 import kotlinx.coroutines.runBlocking
 import kotlin.test.assertEquals
 
@@ -19,10 +12,10 @@ fun testCommand(
     args: List<String> = emptyList(),
     envVars: MutableEnvironment = mutableMapOf<String, String>().env,
     inputStdio: List<String> = emptyList(),
-    expectedStdout: List<String>,
+    expectedStdout: List<String> = emptyList(),
     expectedStderr: List<String> = emptyList(),
     expectedCommandResult: ProcessResult = 0.exitCode
-) {
+): ProcessContext {
     val stdin = StringInputStream(inputStdio)
     val stdout = StringOutputStream()
     val stderr = StringOutputStream()
@@ -38,11 +31,16 @@ fun testCommand(
             get() = stderr
     }
 
-    val context = ProcessContextImpl(
-        args = args,
+    val parentCtx = ProcessContextImpl(
         env = envVars,
         parent = null,
         io = mockIo
+    )
+    val context = ProcessContextImpl(
+        env = envVars,
+        args = args,
+        parent = parentCtx,
+        io = parentCtx.io
     )
 
     val result = runBlocking {
@@ -52,4 +50,6 @@ fun testCommand(
     assertEquals(expectedCommandResult, result)
     assertEquals(expectedStdout, stdout.content)
     assertEquals(expectedStderr, stderr.content)
+
+    return context
 }
